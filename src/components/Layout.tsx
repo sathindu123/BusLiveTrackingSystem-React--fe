@@ -1,20 +1,28 @@
-import { Link } from "react-router-dom";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom"
+import { useAuth } from "../context/authContext"
+import Navbar from "../pages/Navbar"
+import { UserRole } from "../types"
 
-export default function Layout() {
+const Layout = () => {
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
   return (
-    <div>
-      <nav style={{ display: "flex", gap: "20px", padding: "20px" }}>
-        <Link to="/home">
-          <button>Home</button>
-        </Link>
+    <>
+      <Navbar
+        role={user?.role ?? UserRole.GUEST}
+        onLogout={() => {
+          logout()
+          navigate("/login")
+        }}
+        onHome={() => navigate("/")}
+      />
 
-        <Link to="/post">
-          <button>Post</button>
-        </Link>
-      </nav>
-
-      <Outlet />
-    </div>
-  );
+      <main>
+        <Outlet />
+      </main>
+    </>
+  )
 }
+
+export default Layout

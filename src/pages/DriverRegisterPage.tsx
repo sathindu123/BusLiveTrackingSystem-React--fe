@@ -1,12 +1,10 @@
+
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User, Lock, Bus, Phone, AlertCircle, CheckCircle2 } from 'lucide-react';
 
-interface DriverRegisterPageProps {
-  onRegisterSuccess: (name: string, busNumber: string) => void;
-  onLoginClick: () => void;
-}
-
-export const DriverRegisterPage: React.FC<DriverRegisterPageProps> = ({ onRegisterSuccess, onLoginClick }) => {
+export const DriverRegisterPage: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
@@ -49,7 +47,7 @@ export const DriverRegisterPage: React.FC<DriverRegisterPageProps> = ({ onRegist
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-slate-50 p-4 relative overflow-hidden">
+ <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-slate-50 p-4 relative overflow-hidden">
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-blue-600 to-slate-50 -z-0"></div>
       
@@ -176,7 +174,7 @@ export const DriverRegisterPage: React.FC<DriverRegisterPageProps> = ({ onRegist
           <div className="mt-6 text-center border-t border-slate-100 pt-4">
             <p className="text-sm text-slate-500">
               Already registered?{' '}
-              <button onClick={onLoginClick} className="text-blue-600 font-bold hover:text-blue-700 hover:underline">
+              <button onClick={() => navigate('/login')} className="text-blue-600 font-bold hover:text-blue-700 hover:underline">
                 Login Here
               </button>
             </p>
@@ -186,5 +184,7 @@ export const DriverRegisterPage: React.FC<DriverRegisterPageProps> = ({ onRegist
     </div>
   );
 };
+function onRegisterSuccess(fullName: string, busNumber: string) {
+  throw new Error('Function not implemented.');
+}
 
-export default DriverRegisterPage;

@@ -1,45 +1,29 @@
-import { createContext, useContext, useEffect, useState } from "react"
-import { getMyDetails } from "../services/auth"
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import type { User } from '../types';
 
-const AuthContext = createContext<any>(null)
+interface AuthContextType {
+  user: User | null;
+  login: (userData: User) => void;
+  logout: () => void;
+}
 
-export const AuthProvider = ({ children }: any) => {
-  const [user, setUser] = useState<any>(null)
-  const [ loding, setLoding] = useState(true)
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken")
-    if (token) {
-      getMyDetails()
-        .then((res) => {
-          setUser(res.data)
-        })
-        .catch((err) => {
-          // if token expire or me api call fail
-          setUser(null)
-          console.error(err)
-        }).finally(() =>{
-          setLoding(false)
-        })
-    }else{
-      setUser(null)
-      setLoding(false)
-    }
-  }, [])
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+
+  const login = (userData: User) => setUser(userData);
+  const logout = () => setUser(null);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loding}}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
 
-// { user, setUser }
 export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider")
-  }
-  return context
-}
- 
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  return context;
+};
