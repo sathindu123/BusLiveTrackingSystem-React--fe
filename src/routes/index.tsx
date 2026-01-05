@@ -12,6 +12,8 @@ import { DriverLoginPage } from '../pages/DriverLoginPage';
 import { DriverRegisterPage } from '../pages/DriverRegisterPage';
 import { DriverDashboard } from '../pages/DriverDashboard';
 import { PassengerDashboard } from '../pages/PassengerDashboard';
+import { DriverProfilePage } from '../pages/DriverProfilePage';
+import { SettingsPage } from '../pages/SettingsPage';
 
 const Router: React.FC = () => {
   const { user } = useAuth();
@@ -27,6 +29,16 @@ const Router: React.FC = () => {
         path="/driver-dashboard" 
         element={user?.role === UserRole.DRIVER ? <DriverDashboard /> : <Navigate to="/login" replace />} 
       />
+
+       <Route 
+        path="/driver-profile" 
+        element={user?.role === UserRole.DRIVER ? <DriverProfilePage /> : <Navigate to="/login" replace />} 
+      />
+      <Route 
+        path="/settings" 
+        element={user?.role === UserRole.DRIVER ? <SettingsPage /> : <Navigate to="/login" replace />} 
+      />
+      
       
       <Route path="/passenger-dashboard" element={<PassengerDashboard />} />
       

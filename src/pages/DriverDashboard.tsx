@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Bus, MapPin, Navigation, Power, Users, DollarSign, 
-  AlertTriangle, CircleDot, LogOut, Info, Settings 
+  AlertTriangle, CircleDot, LogOut, Info, Settings, User as UserIcon
 } from 'lucide-react';
 import { useAuth } from '../context/authContext';
 import { useNavigate } from 'react-router-dom';
@@ -63,7 +63,15 @@ export const DriverDashboard: React.FC = () => {
           </div>
         </div>
         <div className="flex items-center space-x-2">
-           <button onClick={handleLogout} className="text-white/70 p-2 hover:bg-white/10 rounded-lg transition-colors"><LogOut size={20}/></button>
+           <button onClick={() => navigate('/driver-profile')} className="text-white/70 p-2 hover:bg-white/10 rounded-lg transition-colors">
+              <UserIcon size={20}/>
+           </button>
+           <button onClick={() => navigate('/settings')} className="text-white/70 p-2 hover:bg-white/10 rounded-lg transition-colors">
+              <Settings size={20}/>
+           </button>
+           <button onClick={handleLogout} className="text-white/70 p-2 hover:bg-white/10 rounded-lg transition-colors">
+              <LogOut size={20}/>
+           </button>
         </div>
       </header>
 
@@ -87,12 +95,13 @@ export const DriverDashboard: React.FC = () => {
       <div className="bg-white rounded-t-[3rem] shadow-[0_-15px_50px_rgba(0,0,0,0.1)] z-20 px-8 pb-10">
         <div className="w-14 h-1.5 bg-slate-100 rounded-full mx-auto my-5"></div>
         <div className="mb-8">
+          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block ml-1">Current Active Route</label>
           <div className="relative">
             <select 
               value={selectedRoute}
               onChange={(e) => setSelectedRoute(e.target.value)}
               disabled={isOnline}
-              className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 pr-12 text-sm font-bold appearance-none text-slate-800 focus:border-emerald-500 transition-all disabled:opacity-70"
+              className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 pr-12 text-sm font-bold appearance-none text-slate-800 focus:border-emerald-500 transition-all disabled:opacity-70 disabled:bg-slate-100"
             >
               <option value="">මාර්ගය තෝරන්න (Select Route)</option>
               {routes.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
@@ -104,7 +113,7 @@ export const DriverDashboard: React.FC = () => {
           <div className="bg-blue-50/60 p-5 rounded-3xl border border-blue-100/50 flex flex-col items-center">
             <Users size={22} className="text-blue-600 mb-2" />
             <span className="text-2xl font-black text-slate-800 leading-none tracking-tighter">{passengerCount}</span>
-            <span className="text-[9px] font-bold text-slate-400 uppercase mt-1">Passengers</span>
+            <span className="text-[9px] font-bold text-slate-400 uppercase mt-1">Sittings</span>
           </div>
           <div className="bg-emerald-50/60 p-5 rounded-3xl border border-emerald-100/50 flex flex-col items-center">
             <DollarSign size={22} className="text-emerald-600 mb-2" />

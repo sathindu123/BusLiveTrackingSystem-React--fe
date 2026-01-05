@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 import { UserRole } from '../types';
 import { User, Lock, ArrowRight, BusFront, AlertCircle } from 'lucide-react';
+import { loginDash } from '../services/auth'
+import axios, { AxiosError } from "axios";
 
 export const DriverLoginPage: React.FC = () => {
   const { login } = useAuth();
@@ -23,26 +25,30 @@ export const DriverLoginPage: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    setTimeout(() => {
-      if (formData.username.length >= 3 && formData.password.length >= 3) {
-        login({
-          id: formData.username,
-          name: 'Saman Perera',
-          role: UserRole.DRIVER,
-          busNumber: 'ND-8840'
-        });
-        navigate('/driver-dashboard');
+    if(formData.username == "" || formData.password == ""){
+      setError('Invalid credentials. Please try again.');
+    }
+
+    try{
+
+      const res = await loginDash(formData.username,formData.password);
+      alert(res.message || "Login SuccsesFully");
+      navigate("/driver-dashboard")
+    }catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        // Backend eken return karana message eka display karanna
+        console.error("Axios error response:", err.response?.data);
+        setError(err.response?.data?.message || "Something went wrong. Try again.");
       } else {
-        setError('Invalid credentials. Please try again.');
-        setLoading(false);
+        console.error("Unknown error:", err);
+        setError("Something went wrong. Try again.");
       }
-     
-    }, 1500);
+    }
   };
 
 

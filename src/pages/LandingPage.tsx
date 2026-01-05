@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Map, Smartphone, Navigation, ShieldCheck, Clock, Bus } from 'lucide-react';
 
+
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 

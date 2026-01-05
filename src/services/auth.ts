@@ -1,11 +1,10 @@
 import api from "./api"
 
 type RegisterDataType = {
-  firstname: string
-  lastname: string
-  email: string
+  busNb: String
+  username: String
   password: string
-  role: string
+  telNb: String
 }
 export const register = async (data: RegisterDataType) => {
   const res = await api.post("/auth/register", data)
@@ -13,7 +12,7 @@ export const register = async (data: RegisterDataType) => {
 }
 
 // http://localhost:5000/api/v1/auth/login
-export const login = async (email: string, password: string) => {
+export const loginDash = async (email: string, password: string) => {
   const res = await api.post("/auth/login", { email, password })
   return res.data
 }

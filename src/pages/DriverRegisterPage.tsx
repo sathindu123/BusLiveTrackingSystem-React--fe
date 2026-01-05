@@ -1,7 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, Bus, Phone, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { User, Lock, Bus, Phone, AlertCircle, CheckCircle2, ClockFading } from 'lucide-react';
+import { register } from '../services/auth';
+
+import axios, { AxiosError } from "axios";
 
 export const DriverRegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -23,9 +26,27 @@ export const DriverRegisterPage: React.FC = () => {
     setError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const hasEmptyFields = (data: Record<string, any>) => {
+  return Object.values(data).some(
+    value =>
+      value === null ||
+      value === undefined ||
+      (typeof value === "string" && value.trim() === "")
+  );
+};
+
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+
+    if (hasEmptyFields(formData)) {
+      setError("All fields are required");
+      setIsLoading(false);
+      return;
+    }
+
 
     // Simple validation
     if (formData.password !== formData.confirmPassword) {
@@ -40,10 +61,41 @@ export const DriverRegisterPage: React.FC = () => {
       return;
     }
 
-    // Simulate API call
-    setTimeout(() => {
-      onRegisterSuccess(formData.fullName, formData.busNumber);
-    }, 1500);
+
+    try {
+ 
+      setIsLoading(true);
+
+      const user = {
+        busNb: formData.busNumber,
+        username: formData.fullName,
+        password: formData.password,
+        telNb: formData.phone,
+      };
+
+      const res = await register(user);
+  
+      alert(res.message || "Account created successfully");
+
+      formData.busNumber = ""
+      formData.fullName = ""
+      formData.password = ""
+      formData.confirmPassword= ""
+      formData.phone = ""
+
+      navigate("/login");
+
+    }catch (err: any) {
+    if (axios.isAxiosError(err)) {
+      // Backend eken return karana message eka display karanna
+      setError(err.response?.data?.message || "Something went wrong. Try again.");
+    } else {
+      setError("Something went wrong. Try again.");
+    }
+    } finally {
+        setIsLoading(false);
+    }
+
   };
 
   return (
@@ -157,9 +209,11 @@ export const DriverRegisterPage: React.FC = () => {
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   className="block w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
-                  placeholder="Repeat password"
+                  placeholder="Repeat password" 
                 />
+              
               </div>
+              
             </div>
 
             <button
@@ -184,7 +238,6 @@ export const DriverRegisterPage: React.FC = () => {
     </div>
   );
 };
-function onRegisterSuccess(fullName: string, busNumber: string) {
-  throw new Error('Function not implemented.');
-}
+
+
 

@@ -1,12 +1,10 @@
-// axiosConfig.ts
-// apiService.ts
-// api.ts
+
 import axios, { AxiosError } from "axios"
 
 import { refreshTokens } from "./auth"
 
 const api = axios.create({
-  baseURL: "https://smart-blog-be-xi.vercel.app/api/v1"
+  baseURL: "http://localhost:5000/api/v1"
 })
 
 const PUBLIC_ENDPOINTS = ["/auth/login", "/auth/register"]
