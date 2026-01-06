@@ -12,8 +12,8 @@ export const register = async (data: RegisterDataType) => {
 }
 
 // http://localhost:5000/api/v1/auth/login
-export const loginDash = async (email: string, password: string) => {
-  const res = await api.post("/auth/login", { email, password })
+export const loginDash = async (username: string, password: string) => {
+  const res = await api.post("/auth/login", { username, password })
   return res.data
 }
 

@@ -18,7 +18,7 @@ import { SettingsPage } from '../pages/SettingsPage';
 const Router: React.FC = () => {
   const { user } = useAuth();
 
-  return (
+  return ( 
     <Routes >
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<DriverLoginPage />} />
@@ -27,16 +27,16 @@ const Router: React.FC = () => {
       {/* Protected Driver Route */}
       <Route 
         path="/driver-dashboard" 
-        element={user?.role === UserRole.DRIVER ? <DriverDashboard /> : <Navigate to="/login" replace />} 
+        element={<DriverDashboard />} 
       />
 
        <Route 
         path="/driver-profile" 
-        element={user?.role === UserRole.DRIVER ? <DriverProfilePage /> : <Navigate to="/login" replace />} 
+        element={<DriverProfilePage />} 
       />
       <Route 
         path="/settings" 
-        element={user?.role === UserRole.DRIVER ? <SettingsPage /> : <Navigate to="/login" replace />} 
+        element={<SettingsPage />} 
       />
       
       

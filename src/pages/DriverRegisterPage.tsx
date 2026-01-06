@@ -83,7 +83,7 @@ export const DriverRegisterPage: React.FC = () => {
       formData.confirmPassword= ""
       formData.phone = ""
 
-      navigate("/login");
+      navigate("/");
 
     }catch (err: any) {
     if (axios.isAxiosError(err)) {

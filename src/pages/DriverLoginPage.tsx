@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 import { UserRole } from '../types';
-import { User, Lock, ArrowRight, BusFront, AlertCircle } from 'lucide-react';
+import { User, Lock, ArrowRight, BusFront, AlertCircle, FolderMinus } from 'lucide-react';
 import { loginDash } from '../services/auth'
 import axios, { AxiosError } from "axios";
 
@@ -36,7 +36,12 @@ export const DriverLoginPage: React.FC = () => {
 
     try{
 
-      const res = await loginDash(formData.username,formData.password);
+      const username = formData.username
+      const password = formData.password
+
+      console.log("use", username)
+
+      const res = await loginDash(username,password);
       alert(res.message || "Login SuccsesFully");
       navigate("/driver-dashboard")
     }catch (err: any) {
@@ -48,6 +53,8 @@ export const DriverLoginPage: React.FC = () => {
         console.error("Unknown error:", err);
         setError("Something went wrong. Try again.");
       }
+    }finally {
+        setLoading(false);
     }
   };
 
