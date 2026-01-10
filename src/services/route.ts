@@ -23,3 +23,8 @@ export const saveRouteStatus = async (payload: any) => {
   const res = await api.post("/auth/saveroute", payload);
   return res.data;
 };
+
+export const getroutedetailsPasenger = async (endstation: any) => {
+  const res = await api.get(`/auth/getroutedetailspasenger?endstation=${endstation}`)
+  return res.data
+}
