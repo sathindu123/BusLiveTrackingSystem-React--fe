@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
-import { UserRole } from '../types';
 import { User, Lock, ArrowRight, BusFront, AlertCircle, FolderMinus } from 'lucide-react';
-import { loginDash } from '../services/auth'
+import { getMyDetails, loginDash } from '../services/auth'
 import axios, { AxiosError } from "axios";
+import Swal from 'sweetalert2';
 
 export const DriverLoginPage: React.FC = () => {
-  const { login } = useAuth();
+  const { setUser } = useAuth();
   const navigate = useNavigate();
 
 
@@ -26,6 +26,7 @@ export const DriverLoginPage: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -39,11 +40,28 @@ export const DriverLoginPage: React.FC = () => {
       const username = formData.username
       const password = formData.password
 
-      console.log("use", username)
-
+  
       const res = await loginDash(username,password);
-      alert(res.message || "Login SuccsesFully");
-      navigate("/driver-dashboard")
+      console.log("res = ", res)
+
+      const accessToken = res.data.accessToken;  
+      localStorage.setItem("accessToken", accessToken);
+
+      const details = await getMyDetails();
+      console.log("dets",details)
+      setUser(details.data)
+
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful 🎉",
+        text: "Welcome to Driver Dashboard",
+        showConfirmButton: false,      
+        timer: 2000,                   
+        timerProgressBar: true,
+        willClose: () => {
+          navigate("/driver-dashboard");
+        }
+      });
     }catch (err: any) {
       if (axios.isAxiosError(err)) {
         // Backend eken return karana message eka display karanna

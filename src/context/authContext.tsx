@@ -1,22 +1,28 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import type { User } from '../types';
+import { createContext, useContext, useEffect, useState } from "react";
+import { getMyDetails } from "../services/auth";
 
-interface AuthContextType {
-  user: User | null;
-  login: (userData: User) => void;
-  logout: () => void;
-}
+const AuthContext = createContext<any>(null);
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthProvider = ({ children }: any) => {
+  const [user, setUser] = useState<any>(null);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-
-  const login = (userData: User) => setUser(userData);
-  const logout = () => setUser(null);
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      getMyDetails()
+        .then((res) => {
+          setUser(res.data);
+        })
+        .catch((err) => {
+          console.log("Token invalid or expired" , err);
+          localStorage.removeItem("accessToken");
+          setUser(null);
+        });
+    }
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser }}>
       {children}
     </AuthContext.Provider>
   );
@@ -24,6 +30,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
   return context;
 };

@@ -1,9 +1,10 @@
 
 import React, { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, Bus, Phone, AlertCircle, CheckCircle2, ClockFading } from 'lucide-react';
+import { User, Lock, Bus, Phone, AlertCircle, CheckCircle2, ClockFading} from 'lucide-react';
 import { register } from '../services/auth';
 
+import Swal from "sweetalert2";
 import axios, { AxiosError } from "axios";
 
 export const DriverRegisterPage: React.FC = () => {
@@ -50,6 +51,7 @@ export const DriverRegisterPage: React.FC = () => {
 
     // Simple validation
     if (formData.password !== formData.confirmPassword) {
+      AllalertGenarate()
       setError("Passwords do not match");
       setIsLoading(false);
       return;
@@ -74,8 +76,13 @@ export const DriverRegisterPage: React.FC = () => {
       };
 
       const res = await register(user);
-  
-      alert(res.message || "Account created successfully");
+      Swal.fire({
+          icon: "success",
+          title: "Registration Successful 🎉",
+          text: res.message || "Your account has been created successfully!",
+          confirmButtonText: "Continue",
+          confirmButtonColor: "#2563eb", 
+      });
 
       formData.busNumber = ""
       formData.fullName = ""
@@ -240,4 +247,8 @@ export const DriverRegisterPage: React.FC = () => {
 };
 
 
+
+function AllalertGenarate() {
+  
+}
 

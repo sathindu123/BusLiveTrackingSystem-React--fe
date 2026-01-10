@@ -1,31 +1,99 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Bus, MapPin, Save, Phone, BadgeCheck, Camera } from 'lucide-react';
-import { useAuth } from '../context/authContext';
+import { ArrowLeft, User, Bus, MapPin, Save, Phone, BadgeCheck, Camera, ClockFading } from 'lucide-react';
+
+
+import { useAuth } from "../context/authContext";
+
+import Swal from "sweetalert2";
+import { busdetailsSave, getroutedetails } from '../services/route';
+
+type busregType = {
+  fullname: string;
+  telNb: number;
+  buscode: string;
+  startstation: string;
+  endstation: string;
+}
 
 export const DriverProfilePage: React.FC = () => {
-  const navigate = useNavigate();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  
   
   const [profileData, setProfileData] = useState({
-    name: user?.name || 'Saman Perera',
-    phone: '071 234 5678',
-    busNumber: user?.busNumber || 'ND-4589',
-    routeNumber: '177',
-    startStation: 'Kaduwela',
-    endStation: 'Kollupitiya'
+  
+    name: '',
+    phone: 0,
+    busNumber: '',
+    startStation: '',
+    endStation: ''
   });
 
   const [isSaving, setIsSaving] = useState(false);
+  
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const busCode = user?.busNb;
+      
+        const res = await getroutedetails(busCode);
 
-  const handleSave = () => {
-    setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      // Custom toast or notification could go here
-      alert("විස්තර සාර්ථකව සුරකින ලදී! (Details saved successfully)");
-      navigate('/driver-dashboard');
-    }, 1200);
+        const driver = res.data;
+
+        setProfileData({
+          name: driver.fullname ?? '',
+          phone: driver.telNb ?? 0,
+          busNumber: driver.buscode ?? '',
+          startStation: driver.startstation ?? '',
+          endStation: driver.endstation ?? '',
+        });
+      } catch (error) {
+        Swal.fire("Error", "Failed to load profile", "error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, []);
+  
+
+  const handleSave = async () => {
+    try{
+      setIsSaving(true);
+          
+        const Bus: busregType = {
+            fullname: profileData.name,
+            telNb: profileData.phone,
+            buscode: profileData.busNumber,
+            startstation: profileData.startStation,
+            endstation: profileData.endStation,
+        };
+        const res = await busdetailsSave(Bus);
+        Swal.fire({
+          icon: "success",
+          title: "Registration Successful 🎉",
+          text: res.message || "Your account has been created successfully!",
+          confirmButtonText: "Continue",
+          confirmButtonColor: "#2563eb", 
+        });
+    }catch (err: any) {
+      Swal.fire({
+          icon: "error",
+          title: "Registration UnSuccessful ",
+          text: err.message || "Error!",
+          confirmButtonText: "Continue",
+          confirmButtonColor: "#2563eb", 
+        });
+   
+    }finally {
+    setIsSaving(false); // 🔥 MOST IMPORTANT LINE
+  }
+   
+
   };
 
   return (
@@ -181,3 +249,7 @@ export const DriverProfilePage: React.FC = () => {
     </div>
   );
 };
+
+function setLoading(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}

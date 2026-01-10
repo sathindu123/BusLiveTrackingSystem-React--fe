@@ -6,6 +6,8 @@ type RegisterDataType = {
   password: string
   telNb: String
 }
+
+
 export const register = async (data: RegisterDataType) => {
   const res = await api.post("/auth/register", data)
   return res.data
@@ -18,11 +20,22 @@ export const loginDash = async (username: string, password: string) => {
 }
 
 export const getMyDetails = async () => {
-  const res = await api.get("/auth/me")
+  const token = localStorage.getItem("accessToken")
+  if (!token) throw new Error("No access token found")
+
+  const res = await api.get("/auth/me", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
   return res.data
 }
+
+
 
 export const refreshTokens = async (refreshToken: string) => {
   const res = await api.post("/auth/refresh", {token: refreshToken})
   return res.data
 }
+
+
